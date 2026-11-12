@@ -1,0 +1,140 @@
+@import "tailwindcss";
+
+/*
+  CAOIM admin — a records tool for the church office.
+  Type: IBM Plex Serif for page titles (register-book feel), Plex Sans for the
+  interface, Plex Mono for shillings, member and certificate numbers.
+  Colour: warm paper and ink; the church's blue (#003DA5) for actions and the
+  current page; its gold (#FBC457) only as a small marker.
+*/
+:root {
+  --paper: #f6f5f1;
+  --surface: #ffffff;
+  --sunken: #efede6;
+  --ink: #17191f;
+  --ink-2: #565a64;
+  --ink-3: #7a7e88;
+  --line: #dcd9cf;
+  --line-strong: #c7c3b6;
+  --brand: #003da5;
+  --brand-hover: #002f80;
+  --brand-tint: #e7edf8;
+  --gold: #fbc457;
+  --danger: #b42318;
+  --danger-tint: #fcebe9;
+  --ok: #1d6f46;
+  --ok-tint: #e6f3ec;
+  --warn: #8a5a00;
+  --warn-tint: #fdf3dc;
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-ink: var(--ink);
+  --color-ink-2: var(--ink-2);
+  --color-ink-3: var(--ink-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-brand: var(--brand);
+  --color-brand-hover: var(--brand-hover);
+  --color-brand-tint: var(--brand-tint);
+  --color-gold: var(--gold);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+  --color-ok: var(--ok);
+  --color-ok-tint: var(--ok-tint);
+  --color-warn: var(--warn);
+  --color-warn-tint: var(--warn-tint);
+  --font-sans: var(--font-plex-sans);
+  --font-serif: var(--font-plex-serif);
+  --font-mono: var(--font-plex-mono);
+}
+
+html {
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-plex-sans), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium whitespace-nowrap transition-colors disabled:cursor-not-allowed disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply border-brand bg-brand text-white hover:border-brand-hover hover:bg-brand-hover;
+  }
+  .btn-secondary {
+    @apply border-line-strong bg-surface text-ink hover:bg-sunken;
+  }
+  .btn-danger {
+    @apply border-danger/40 bg-surface text-danger hover:bg-danger-tint;
+  }
+  .btn-sm {
+    @apply min-h-8 px-3 text-[13px];
+  }
+
+  .input {
+    @apply block min-h-10 w-full rounded-md border border-line-strong bg-surface px-3 py-2 text-[15px] text-ink placeholder:text-ink-3 focus:border-brand focus:ring-2 focus:ring-brand/20 focus:outline-none disabled:bg-sunken;
+  }
+  textarea.input {
+    @apply leading-relaxed;
+  }
+
+  .label {
+    @apply mb-1.5 block text-[13px] font-medium text-ink;
+  }
+  .hint {
+    @apply mt-1.5 text-[13px] leading-snug text-ink-2;
+  }
+
+  .panel {
+    @apply rounded-lg border border-line bg-surface;
+  }
+
+  .link {
+    @apply font-medium text-brand underline decoration-brand/30 underline-offset-2 hover:decoration-brand;
+  }
+
+  .table {
+    @apply w-full border-collapse text-left text-[14px];
+  }
+  .table th {
+    @apply border-b border-line bg-sunken/60 px-4 py-2.5 text-[12px] font-semibold tracking-wide text-ink-2 uppercase;
+  }
+  .table td {
+    @apply border-b border-line px-4 py-3 align-top;
+  }
+  .table tbody tr:last-child td {
+    @apply border-b-0;
+  }
+  .table tbody tr:hover td {
+    @apply bg-paper/70;
+  }
+
+  .figure {
+    @apply font-mono tabular-nums;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  html,
+  body {
+    background: #fff;
+  }
+}
