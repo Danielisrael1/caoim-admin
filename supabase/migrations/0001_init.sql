@@ -202,13 +202,16 @@ create policy "public reads published" on public.ministries for select to anon, 
 create policy "public reads published" on public.events     for select to anon, authenticated using (published);
 create policy "public reads published" on public.programmes for select to anon, authenticated using (published);
 
--- Replace one top-level section of the settings (e.g. 'contact') atomically.
-create function public.set_site_section(section text, value jsonb)
+-- Replace some top-level keys of the settings (e.g. {"contact": {...}}) in one
+-- statement, leaving the other keys alone. Runs as the caller, so RLS applies.
+create function public.merge_site_settings(patch jsonb)
 returns void language sql set search_path = '' as $$
   update public.site_settings
-     set data = data || jsonb_build_object(section, value)
+     set data = data || patch
    where id = 1
 $$;
+revoke execute on function public.merge_site_settings(jsonb) from public, anon;
+grant execute on function public.merge_site_settings(jsonb) to authenticated;
 
 -- Everything the public website needs, in the same shape as site.js, in one call:
 --   POST /rest/v1/rpc/site_content
@@ -497,6 +500,25 @@ begin
     execute format('create trigger touch before update on public.%I for each row execute function public.touch_updated_at()', t);
   end loop;
 end $$;
+
+-- Totals for the reports page, grouped in the database so a busy year isn't
+-- cut off by the API's row limit. Runs as the caller: RLS limits it to finance staff.
+--   kind = 'income'  → key is the fund id;     'method' → key is the payment method
+--   kind = 'expense' → key is the category id
+create function public.finance_totals(from_date date, to_date date)
+returns table (kind text, month int, key text, total bigint, entries bigint)
+language sql stable set search_path = '' as $$
+  select 'income', extract(month from date)::int, fund_id::text, sum(amount)::bigint, count(*)
+    from public.contributions where date between from_date and to_date group by 2, 3
+  union all
+  select 'method', extract(month from date)::int, method::text, sum(amount)::bigint, count(*)
+    from public.contributions where date between from_date and to_date group by 2, 3
+  union all
+  select 'expense', extract(month from date)::int, category_id::text, sum(amount)::bigint, count(*)
+    from public.expenses where date between from_date and to_date group by 2, 3
+$$;
+revoke execute on function public.finance_totals(date, date) from public, anon;
+grant execute on function public.finance_totals(date, date) to authenticated;
 
 insert into public.funds (name, sort) values
   ('Tithe', 1), ('Offering', 2), ('Thanksgiving', 3), ('Seed', 4),

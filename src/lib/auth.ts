@@ -46,7 +46,7 @@ export async function requireArea(area: Area) {
 /** For server actions: returns a client, or an error state the form can show. */
 export async function actionClient(area: Area) {
   const viewer = await getViewer();
-  if (!viewer) return { error: "Your session has ended. Sign in again." } as const;
-  if (!allowed(viewer.role, area)) return { error: "Your account isn't allowed to make this change." } as const;
-  return { supabase: await createClient(), viewer } as const;
+  if (!viewer) return { ok: false, error: "Your session has ended. Sign in again." } as const;
+  if (!allowed(viewer.role, area)) return { ok: false, error: "Your account isn't allowed to make this change." } as const;
+  return { ok: true, supabase: await createClient(), viewer } as const;
 }

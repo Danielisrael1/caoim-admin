@@ -1,6 +1,7 @@
 // Small helpers for reading <form> submissions in server actions.
 
-export type ActionState = { error: string } | null;
+/** `error` is shown in red above the form; `ok` is a confirmation shown in its place. */
+export type ActionState = { error?: string; ok?: string } | null;
 
 export function text(fd: FormData, key: string) {
   const v = fd.get(key);

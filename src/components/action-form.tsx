@@ -43,6 +43,11 @@ export function ActionForm({
           {state.error}
         </div>
       )}
+      {state?.ok && (
+        <div role="status" className="rounded-md border border-ok/30 bg-ok-tint px-4 py-3 text-[14px] leading-relaxed text-ok">
+          {state.ok}
+        </div>
+      )}
       {children}
       <div className="flex flex-wrap items-center gap-3">
         <SubmitButton>{submitLabel}</SubmitButton>
@@ -88,6 +93,11 @@ export function DeleteButton({
       {state?.error && (
         <p role="alert" className="text-[13px] text-danger">
           {state.error}
+        </p>
+      )}
+      {state?.ok && (
+        <p role="status" className="max-w-xs text-[13px] text-ok">
+          {state.ok}
         </p>
       )}
     </form>

@@ -58,9 +58,7 @@ export function Sidebar({ groups }: { groups: NavGroup[] }) {
 /** Phone and tablet: a menu button that opens the same links in a sheet. */
 export function MobileNav({ groups }: { groups: NavGroup[] }) {
   const [open, setOpen] = useState(false);
-  const pathname = usePathname();
-
-  useEffect(() => setOpen(false), [pathname]);
+  // Links close the sheet themselves (onNavigate), so no effect on route change is needed.
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpen(false);
